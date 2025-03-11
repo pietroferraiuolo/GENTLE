@@ -8,6 +8,7 @@ Description
 -----------
 
 """
+
 import os as _os
 import jdcal as _jdcal
 import numpy as _np
@@ -20,11 +21,17 @@ from .core import root as _foldname
 from .utils.osutils import InterferometerConverter
 
 ic = InterferometerConverter()
-OPDIMG  = _foldname.OPD_IMAGES_ROOT_FOLDER
-OPDSER  = _foldname.OPD_SERIES_ROOT_FOLDER
+OPDIMG = _foldname.OPD_IMAGES_ROOT_FOLDER
+OPDSER = _foldname.OPD_SERIES_ROOT_FOLDER
 
-def averageFrames(tn:str, first:int=None, last:int=None,
-                                  file_selector:list=None, thresh:bool=False):
+
+def averageFrames(
+    tn: str,
+    first: int = None,
+    last: int = None,
+    file_selector: list = None,
+    thresh: bool = False,
+):
     """
     Perform the average of a list of images, retrievable through a tracking
     number.
@@ -37,10 +44,10 @@ def averageFrames(tn:str, first:int=None, last:int=None,
         Index number of the first file to consider. If None, the first file in
         the list is considered.
     last : int, optional
-        Index number of the last file to consider. If None, the last file in 
+        Index number of the last file to consider. If None, the last file in
         list is considered.
     file_selector : list, optional
-        A list of integers, representing the specific files to load. If None, 
+        A list of integers, representing the specific files to load. If None,
         the range (first->last) is considered.
     thresh : bool, optional
         DESCRIPTION. The default is None.
@@ -51,24 +58,30 @@ def averageFrames(tn:str, first:int=None, last:int=None,
         Final image of averaged frames.
 
     """
-    fileList = _osu.getFileList(tn, fold=OPDSER, key='20')
+    fileList = _osu.getFileList(tn, fold=OPDSER, key="20")
     if first is not None and last is not None:
-        fl = [fileList[x] for x in _np.arange(first, last, 1) \
-                              if file_selector is None or x in file_selector]
+        fl = [
+            fileList[x]
+            for x in _np.arange(first, last, 1)
+            if file_selector is None or x in file_selector
+        ]
     else:
         first = 0
         last = len(fileList)
-        fl = [fileList[x] for x in _np.arange(first, last, 1) \
-                              if file_selector is None or x in file_selector]
+        fl = [
+            fileList[x]
+            for x in _np.arange(first, last, 1)
+            if file_selector is None or x in file_selector
+        ]
     imcube = _osu.createCube(fl)
     if thresh is False:
         aveimg = _np.ma.mean(imcube, axis=2)
     else:
-        img = imcube[:,:,0].data * 0
-        mmask = imcube[:,:,0].mask
+        img = imcube[:, :, 0].data * 0
+        mmask = imcube[:, :, 0].mask
         nn = 0
         for j in range(imcube.shape[2]):
-            im = imcube[:,:,j]
+            im = imcube[:, :, j]
             size = im.data.compressed.size
             if size > 1:
                 nn += 1
@@ -78,7 +91,8 @@ def averageFrames(tn:str, first:int=None, last:int=None,
         aveimg = _np.ma.masked_array(img, mask=mmask)
     return aveimg
 
-def saveAverage(tn, average_img=None, overwrite:bool=False, **kwargs):
+
+def saveAverage(tn, average_img=None, overwrite: bool = False, **kwargs):
     """
     Saves an averaged frame, in the same folder as the original frames. If no
     averaged image is passed as argument, it will create a new average for the
@@ -96,17 +110,17 @@ def saveAverage(tn, average_img=None, overwrite:bool=False, **kwargs):
         be passed on
     **kwargs : additional optional arguments
         The same arguments as ''averageFrames'', to specify the averaging method.
-        
+
         tn : str
             Data Tracking Number.
         first : int, optional
             Index number of the first file to consider. If None, the first file in
             the list is considered.
         last : int, optional
-            Index number of the last file to consider. If None, the last file in 
+            Index number of the last file to consider. If None, the last file in
             list is considered.
         file_selector : list, optional
-            A list of integers, representing the specific files to load. If None, 
+            A list of integers, representing the specific files to load. If None,
             the range (first->last) is considered.
         thresh : bool, optional
             DESCRIPTION. The default is None.
@@ -116,14 +130,16 @@ def saveAverage(tn, average_img=None, overwrite:bool=False, **kwargs):
         print(f"Average '{fname}' already exists")
     else:
         if average_img is None:
-            first = kwargs.get('first', None)
-            last = kwargs.get('last', None)
-            fsel = kwargs.get('file_selector', None)
-            thresh = kwargs.get('tresh', False)
-            average_img = averageFrames(tn, first=first, last=last, 
-                                               file_selector=fsel, thresh=thresh)
+            first = kwargs.get("first", None)
+            last = kwargs.get("last", None)
+            fsel = kwargs.get("file_selector", None)
+            thresh = kwargs.get("tresh", False)
+            average_img = averageFrames(
+                tn, first=first, last=last, file_selector=fsel, thresh=thresh
+            )
         _osu.save_phasemap(fname, average_img, overwrite=overwrite)
         print(f"Saved average at '{fname}'")
+
 
 def openAverage(tn):
     """
@@ -139,7 +155,7 @@ def openAverage(tn):
     -------
     image : ndarray
         Averaged image.
-    
+
     Raises
     ------
     FileNotFoundError
@@ -152,6 +168,7 @@ def openAverage(tn):
     except FileNotFoundError as err:
         raise FileNotFoundError(f"Average file '{fname}' does not exist!") from err
     return image
+
 
 def runningDiff(tn, gap=2):
     """
@@ -170,18 +187,19 @@ def runningDiff(tn, gap=2):
         DESCRIPTION.
 
     """
-    llist   = _osu.getFileList(tn)
-    nfile   = len(llist)
+    llist = _osu.getFileList(tn)
+    nfile = len(llist)
     npoints = int(nfile / gap) - 2
-    slist   = []
+    slist = []
     for i in range(0, npoints):
-        q0  = frame(i * gap, llist)
-        q1  = frame(i * gap + 1, llist)
+        q0 = frame(i * gap, llist)
+        q1 = frame(i * gap + 1, llist)
         diff = q1 - q0
         diff = _zern.removeZernike(diff)
         slist.append(diff.std())
     svec = _np.array(slist)
     return svec
+
 
 def frame(idx, mylist):
     """
@@ -207,6 +225,7 @@ def frame(idx, mylist):
         img = mylist[idx]
     return img
 
+
 def spectrum(signal, dt=1, show=None):
     """
 
@@ -228,7 +247,7 @@ def spectrum(signal, dt=1, show=None):
         DESCRIPTION.
 
     """
-# https://numpy.org/doc/stable/reference/generated/numpy.angle - Spectrum phase
+    # https://numpy.org/doc/stable/reference/generated/numpy.angle - Spectrum phase
     nsig = signal.shape
     if _np.size(nsig) == 1:
         thedim = 0
@@ -252,9 +271,10 @@ def spectrum(signal, dt=1, show=None):
             _plt.plot(freq, spe[i, :], label=f"Channel {i}")
         _plt.xlabel(r"Frequency [$Hz$]")
         _plt.ylabel("PS Amplitude")
-        _plt.legend(loc='best')
+        _plt.legend(loc="best")
         _plt.show()
     return spe, freq
+
 
 def frame2ottFrame(img, croppar, flipOffset=True):
     """
@@ -290,6 +310,7 @@ def frame2ottFrame(img, croppar, flipOffset=True):
     fullmask[offx : offx + sx, offy : offy + sy] = img.mask
     fullimg = _np.ma.masked_array(fullimg, fullmask)
     return fullimg
+
 
 def timevec(tn):
     """
@@ -328,6 +349,7 @@ def timevec(tn):
         timevector = _np.array(timevec)
     return timevector
 
+
 def track2jd(tni):
     """
 
@@ -344,8 +366,9 @@ def track2jd(tni):
 
     """
     t = track2date(tni)
-    jdi = sum(_jdcal.gcal2jd(t[0],t[1],t[2]))+t[3]/24+t[4]/1440+t[5]/86400
+    jdi = sum(_jdcal.gcal2jd(t[0], t[1], t[2])) + t[3] / 24 + t[4] / 1440 + t[5] / 86400
     return jdi
+
 
 def track2date(tni):
     """
@@ -383,6 +406,7 @@ def track2date(tni):
     time = [y, mo, d, h, mi, s]
     return time
 
+
 def runningMean(vec, npoints):
     """
 
@@ -401,6 +425,7 @@ def runningMean(vec, npoints):
 
     """
     return _np.convolve(vec, _np.ones(npoints), "valid") / npoints
+
 
 def readTemperatures(tn):
     """
@@ -422,6 +447,7 @@ def readTemperatures(tn):
     temperatures = _osu.load_fits(fname)
     return temperatures
 
+
 def readZernike(tn):
     """
 
@@ -441,6 +467,7 @@ def readZernike(tn):
     fname = _os.path.join(fold, tn, "zernike.fits")
     zernikes = _osu.load_fits(fname)
     return zernikes
+
 
 def zernikePlot(mylist, modes=_np.array(range(1, 11))):
     """
@@ -467,11 +494,12 @@ def zernikePlot(mylist, modes=_np.array(range(1, 11))):
     zlist = []
     for i in range(len(imgcube)):
         print(i)
-        coeff,_= _zern.zernikeFit(imgcube[i], modes)
+        coeff, _ = _zern.zernikeFit(imgcube[i], modes)
         zlist.append(coeff)
     zcoeff = _np.array(zlist)
     zcoeff = zcoeff.T
     return zcoeff
+
 
 def strfunct(vect, gapvect):
     """
@@ -493,6 +521,7 @@ def strfunct(vect, gapvect):
             tx.append((vect[k * jump] - vect[k * jump + gapvect[j]]) ** 2)
         st[j] = _np.mean(_np.sqrt(tx))
     return st
+
 
 def comp_filtered_image(imgin, verbose=False, disp=False, d=1, freq2filter=None):
     """
@@ -522,9 +551,9 @@ def comp_filtered_image(imgin, verbose=False, disp=False, d=1, freq2filter=None)
     img[mask == 0] = 0
     norm = "ortho"
     tf2d = _fft.fft2(img.data, norm=norm)
-    kfreq = _np._fft.fftfreq(sx, d=d)                     # frequency in cicles
-    kfreq2D = _np.meshgrid(kfreq, kfreq)                 # frequency grid x,y
-    knrm = _np.sqrt(kfreq2D[0] ** 2 + kfreq2D[1] ** 2)   # freq. grid distance
+    kfreq = _np._fft.fftfreq(sx, d=d)  # frequency in cicles
+    kfreq2D = _np.meshgrid(kfreq, kfreq)  # frequency grid x,y
+    knrm = _np.sqrt(kfreq2D[0] ** 2 + kfreq2D[1] ** 2)  # freq. grid distance
     # TODO optional mask to get the circle and not the square
     fmask1 = 1.0 * (knrm > _np.max(kfreq))
     if freq2filter is None:
@@ -578,8 +607,17 @@ def comp_filtered_image(imgin, verbose=False, disp=False, d=1, freq2filter=None)
         print(f"RMS spectrum filtered     {e4:.2f}")
     return imgout
 
-def comp_psd(imgin, nbins=None, norm="backward", verbose=False, disp=False,
-                                                 d=1, sigma=None, crop=True):
+
+def comp_psd(
+    imgin,
+    nbins=None,
+    norm="backward",
+    verbose=False,
+    disp=False,
+    d=1,
+    sigma=None,
+    crop=True,
+):
     """
 
 
@@ -627,24 +665,21 @@ def comp_psd(imgin, nbins=None, norm="backward", verbose=False, disp=False,
         nbins = sx // 2
     img = img - _np.mean(img)
     mask = _np.invert(img.mask)
-    # TODO: finestre contro effetti di bordo
-    #        maskf = scipy._ndimage..fourier_gaussian(_np.array(mask, dtype=float), sigma=sigma)
-    #    img=maskf*img#0
     img[mask == 0] = 0
     if sigma is not None:
         img = _ndimage.fourier_gaussian(img, sigma=sigma)
     tf2d = _fft.fft2(img, norm=norm)
     tf2d[0, 0] = 0
     tf2d_power_spectrum = _np.abs(tf2d) ** 2
-    kfreq = _np._fft.fftfreq(sx, d=d)                     # frequency in cicles
-    kfreq2D = _np.meshgrid(kfreq, kfreq)                 # freq. grid
-    knrm = _np.sqrt(kfreq2D[0] ** 2 + kfreq2D[1] ** 2)   # freq. grid distance
-    # TODO optional mask to get the circle and not the square
+    kfreq = _np._fft.fftfreq(sx, d=d)  # frequency in cicles
+    kfreq2D = _np.meshgrid(kfreq, kfreq)  # freq. grid
+    knrm = _np.sqrt(kfreq2D[0] ** 2 + kfreq2D[1] ** 2)  # freq. grid distance
     fmask = knrm < _np.max(kfreq)
     knrm = knrm[fmask].flatten()
     fourier_amplitudes = tf2d_power_spectrum[fmask].flatten()
-    Abins,_,_= _stats.binned_statistic(knrm, fourier_amplitudes,
-                                      statistic="sum", bins=nbins)
+    Abins, _, _ = _stats.binned_statistic(
+        knrm, fourier_amplitudes, statistic="sum", bins=nbins
+    )
     e1 = _np.sum(img[mask] ** 2 / _np.sum(mask))
     e2 = _np.sum(Abins) / _np.sum(mask)
     ediff = _np.abs(e2 - e1) / e1
@@ -671,6 +706,7 @@ def comp_psd(imgin, nbins=None, norm="backward", verbose=False, disp=False,
         _plt.xlabel("Frequency [Hz]")
         _plt.ylabel("Amplitude [A^2]")
     return fout, Aout
+
 
 def integrate_psd(y, img):
     nn = _np.sqrt(_np.sum(-1 * img.mask + 1))
@@ -718,16 +754,17 @@ def modeRebinner(img, rebin):
         Image to rebin.
     rebin : int
         Rebinning factor.
-    
+
     Returns
     -------
     newImg : masked_array
         Rebinned image.
     """
     shape = img.shape
-    new_shape = (shape[0]//rebin, shape[1]//rebin)
+    new_shape = (shape[0] // rebin, shape[1] // rebin)
     newImg = _rebin2DArray(img, new_shape)
     return newImg
+
 
 # From ARTE #
 def _rebin2DArray(a, new_shape, sample=False):

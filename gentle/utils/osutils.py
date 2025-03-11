@@ -5,6 +5,7 @@ Author(s)
 - Pietro Ferraiuolo: updated in 2025
 
 """
+
 import os
 import h5py
 import time
@@ -16,6 +17,7 @@ from gentle.core import root as _fn
 
 OPTDATA = _fn.OPT_DATA_FOLDER
 OPDIMG = _fn.OPD_IMAGES_ROOT_FOLDER
+
 
 def findTracknum(tn, complete_path: bool = False):
     """
@@ -90,7 +92,7 @@ def getFileList(tn=None, fold=None, key: str = None):
     --------
 
     Here are some examples regarding the use of the 'key' argument. Let's say w
-    e need a list of files inside ''tn = '20160516_114916' '' in the IFFunctions 
+    e need a list of files inside ''tn = '20160516_114916' '' in the IFFunctions
     folder.
 
         >>> iffold = 'IFFunctions'
@@ -115,8 +117,7 @@ def getFileList(tn=None, fold=None, key: str = None):
     ore after 'mode' to exclude the 'modesVector.fits' file from the list.
     """
     if tn is None and fold is not None:
-        fl = sorted([os.path.join(fold, file)
-                     for file in os.listdir(fold)])
+        fl = sorted([os.path.join(fold, file) for file in os.listdir(fold)])
     else:
         try:
             paths = findTracknum(tn, complete_path=True)
@@ -125,21 +126,22 @@ def getFileList(tn=None, fold=None, key: str = None):
             for path in paths:
                 if fold is None:
                     fl = []
-                    fl.append(sorted([os.path.join(path, file)
-                                      for file in os.listdir(path)]))
-                elif fold in path.split('/')[-2]:
-                    fl = sorted([os.path.join(path, file)
-                                 for file in os.listdir(path)])
+                    fl.append(
+                        sorted([os.path.join(path, file) for file in os.listdir(path)])
+                    )
+                elif fold in path.split("/")[-2]:
+                    fl = sorted([os.path.join(path, file) for file in os.listdir(path)])
                 else:
                     raise Exception
         except Exception as exc:
             raise FileNotFoundError(
-                f"Invalid Path: no data found for tn '{tn}'") from exc
+                f"Invalid Path: no data found for tn '{tn}'"
+            ) from exc
     if key is not None:
         try:
             selected_list = []
             for file in fl:
-                if key in file.split('/')[-1]:
+                if key in file.split("/")[-1]:
                     selected_list.append(file)
         except TypeError as err:
             raise TypeError("'key' argument must be a string") from err
@@ -181,10 +183,9 @@ def tnRange(tn0, tn1):
             tn_folds = sorted(os.listdir(fold))
             id0 = tn_folds.index(tn0)
             id1 = tn_folds.index(tn1)
-            tnMat = [os.path.join(fold, tn) for tn in tn_folds[id0:id1+1]]
+            tnMat = [os.path.join(fold, tn) for tn in tn_folds[id0 : id1 + 1]]
         else:
-            raise FileNotFoundError(
-                "The tracking numbers are in different foldes")
+            raise FileNotFoundError("The tracking numbers are in different foldes")
     else:
         tnMat = []
         for ff in tn0_fold:
@@ -193,8 +194,7 @@ def tnRange(tn0, tn1):
                 tn_folds = sorted(os.listdir(fold))
                 id0 = tn_folds.index(tn0)
                 id1 = tn_folds.index(tn1)
-                tnMat.append([os.path.join(fold, tn)
-                             for tn in tn_folds[id0:id1+1]])
+                tnMat.append([os.path.join(fold, tn) for tn in tn_folds[id0 : id1 + 1]])
     return tnMat
 
 
@@ -213,14 +213,14 @@ def read_phasemap(file_path):
     image: numpy masked array
         Image as a masked array.
     """
-    ext = file_path.split('.')[-1]
-    if ext == 'fits':
+    ext = file_path.split(".")[-1]
+    if ext == "fits":
         image = load_fits(file_path)
-    elif ext=='4D':
+    elif ext == "4D":
         image = InterferometerConverter.fromPhaseCam6110(file_path)
-    elif ext=='4Ds':
+    elif ext == "4Ds":
         image = load_fits(file_path)
-    elif ext=='h5':
+    elif ext == "h5":
         image = InterferometerConverter.fromPhaseCam4020(file_path)
     return image
 
@@ -228,12 +228,12 @@ def read_phasemap(file_path):
 def load_fits(filepath):
     """
     Loads a FITS file.
-    
+
     Parameters
     ----------
     filepath : str
         Path to the FITS file.
-    
+
     Returns
     -------
     np.array
@@ -241,7 +241,7 @@ def load_fits(filepath):
     """
     with fits.open(filepath) as hdul:
         fit = hdul[0].data
-        if len(hdul) > 1 and hasattr(hdul[1], 'data'):
+        if len(hdul) > 1 and hasattr(hdul[1], "data"):
             mask = hdul[1].data.astype(bool)
             fit = masked_array(fit, mask=mask)
     return fit
@@ -250,27 +250,27 @@ def load_fits(filepath):
 def save_fits(filepath, data):
     """
     Saves a FITS file.
-    
+
     Parameters
     ----------
     filepath : str
         Path to the FITS file.
-    
+
     data : np.array
         Data to be saved.
     """
     if isinstance(data, masked_array):
         fits.writeto(filepath, data.data, overwrite=True)
-        if hasattr(data, 'mask'):
+        if hasattr(data, "mask"):
             fits.append(filepath, data.mask.astype(uint8))
     else:
         fits.writeto(filepath, data, overwrite=True)
-        
+
 
 def newtn():
     """
     Returns a timestamp in a string of the format `YYYYMMDD_HHMMSS`.
-    
+
     Returns
     -------
     str
@@ -291,8 +291,8 @@ def rename4D(folder):
     fold = os.path.join(OPDIMG, folder)
     files = os.listdir(fold)
     for file in files:
-        if file.endswith('.4D'):
-            num_str = file.split('.')[0]
+        if file.endswith(".4D"):
+            num_str = file.split(".")[0]
             if num_str.isdigit():
                 num = int(num_str)
                 new_name = f"{num:05d}.4D"
@@ -301,8 +301,7 @@ def rename4D(folder):
                 os.rename(old_file, new_file)
 
 
-
-class InterferometerConverter():
+class InterferometerConverter:
     """
     This class is crucial to convert H5 files into masked array
     """
@@ -321,8 +320,8 @@ class InterferometerConverter():
                 ima: numpy masked array
                      masked array image
         """
-        file = h5py.File(h5filename, 'r')
-        genraw = file['measurement0']['genraw']['data']
+        file = h5py.File(h5filename, "r")
+        genraw = file["measurement0"]["genraw"]["data"]
         data = np.array(genraw)
         mask = np.zeros(data.shape, dtype=bool)
         mask[np.where(data == data.max())] = True
@@ -343,13 +342,13 @@ class InterferometerConverter():
                 ima: numpy masked array
                      masked array image
         """
-        with h5py.File(i4dfilename, 'r') as ff:
-            data = ff.get('/Measurement/SurfaceInWaves/Data')
+        with h5py.File(i4dfilename, "r") as ff:
+            data = ff.get("/Measurement/SurfaceInWaves/Data")
             meas = data[()]
             mask = np.invert(np.isfinite(meas))
 
         image = np.ma.masked_array(meas * 632.8e-9, mask=mask)
-        
+
         return image
 
     @staticmethod
@@ -371,7 +370,7 @@ class InterferometerConverter():
 
     @staticmethod
     def fromI4DToSimplerData(i4dname, folder, h5name):
-        ''' Function for converting files from 4d 6110 files to H5 files
+        """Function for converting files from 4d 6110 files to H5 files
         Parameters
         ----------
         i4dname: string
@@ -385,11 +384,11 @@ class InterferometerConverter():
         -------
         file_name: string
             finale path name
-        '''
-        file = h5py.File(i4dname, 'r')
-        data = file.get('/Measurement/SurfaceInWaves/Data')
+        """
+        file = h5py.File(i4dname, "r")
+        data = file.get("/Measurement/SurfaceInWaves/Data")
 
         file_name = os.path.join(folder, h5name)
-        hf = h5py.File(file_name, 'w')
-        hf.create_dataset('Data', data=data)
+        hf = h5py.File(file_name, "w")
+        hf.create_dataset("Data", data=data)
         return file_name

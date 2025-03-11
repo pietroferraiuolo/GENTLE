@@ -60,6 +60,7 @@ import math
 
 fac = math.factorial
 
+
 def removeZernike(ima, modes=np.array([1, 2, 3, 4])):
     """
     Remove Zernike modes from an image.
@@ -79,6 +80,7 @@ def removeZernike(ima, modes=np.array([1, 2, 3, 4])):
     coeff, mat = zernikeFit(ima, modes)
     surf = zernikeSurface(ima, coeff, mat)
     return ima - surf
+
 
 def removeZernikeAuxMask(img, mm, zlist):
     """
@@ -101,6 +103,7 @@ def removeZernikeAuxMask(img, mm, zlist):
     coef, mat = zernikeFitAuxmask(img, mm, zlist)
     surf = zernikeSurface(img, coef, mat)
     return np.ma.masked_array(img - surf, img.mask)
+
 
 def zernikeFit(img, zernike_index_vector, qpupil: bool = True):
     """
@@ -127,6 +130,7 @@ def zernikeFit(img, zernike_index_vector, qpupil: bool = True):
     coeff = _surf_fit(xx[mm], yy[mm], img1[mm], zernike_index_vector)
     mat = _getZernike(xx[mm], yy[mm], zernike_index_vector)
     return coeff, mat
+
 
 def zernikeFitAuxmask(img, auxmask, zernike_index_vector):
     """
@@ -156,6 +160,7 @@ def zernikeFitAuxmask(img, auxmask, zernike_index_vector):
     mat = _getZernike(xx[mm], yy[mm], zernike_index_vector)
     return coeff, mat
 
+
 def zernikeSurface(img, coef, mat):
     """
     Generate Zernike surface from coefficients and matrix.
@@ -178,6 +183,7 @@ def zernikeSurface(img, coef, mat):
     zernike_surface = np.zeros(img.shape)
     zernike_surface[mm] = np.dot(mat, coef)
     return np.ma.masked_array(zernike_surface, mask=img.mask)
+
 
 def _surf_fit(xx, yy, zz, zlist, ordering="noll"):
     """
@@ -202,6 +208,7 @@ def _surf_fit(xx, yy, zz, zlist, ordering="noll"):
     A = _getZernike(xx, yy, zlist, ordering)
     B = np.transpose(zz.copy())
     return np.linalg.lstsq(A, B, rcond=None)[0]
+
 
 def _getZernike(xx, yy, zlist, ordering="noll"):
     """
@@ -236,6 +243,7 @@ def _getZernike(xx, yy, zlist, ordering="noll"):
         zkm.append(cnorm * _zernike(m, n, rho, phi))
     return np.transpose(np.array(zkm))
 
+
 def _zernike_rad(m, n, rho):
     """
     Calculate the radial component of Zernike polynomial (m, n).
@@ -263,6 +271,7 @@ def _zernike_rad(m, n, rho):
     )
     return sum(pre_fac(k) * rho ** (n - 2 * k) for k in range((n - m) // 2 + 1))
 
+
 def _zernike(m, n, rho, phi):
     """
     Calculate Zernike polynomial (m, n).
@@ -287,6 +296,7 @@ def _zernike(m, n, rho, phi):
         return rad * np.sin(-m * phi)
     return _zernike_rad(0, n, rho)
 
+
 def _zernikel(j, rho, phi):
     """
     Calculate Zernike polynomial with Null coordinate j.
@@ -310,6 +320,7 @@ def _zernikel(j, rho, phi):
     m = -n + 2 * j
     return _zernike(m, n, rho, phi)
 
+
 def _l2mn_ansi(j):
     """
     Convert ANSI index to Zernike polynomial indices.
@@ -330,6 +341,7 @@ def _l2mn_ansi(j):
         j -= n
     m = -n + 2 * j
     return m, n
+
 
 def _l2mn_noll(j):
     """

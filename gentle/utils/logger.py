@@ -9,6 +9,7 @@ Description
 Sets up the logger for the application.
 
 """
+
 import logging
 import logging.handlers
 
@@ -101,7 +102,7 @@ class txtLogger:
     Methods:
         __init__(file_path):
             Initializes the logger with the specified file path.
-        
+
         log(message):
             Writes a log message to the file.
     """
@@ -122,5 +123,5 @@ class txtLogger:
         Args:
             message (str): The log message to be written to the file.
         """
-        with open(self.file_path, 'a') as f:
-            f.write(message + '\n')
+        with open(self.file_path, "a") as f:
+            f.write(message + "\n")
