@@ -3,3 +3,4 @@ matplotlib
 astropy>=7.0
 scipy
 scikit-image
+h5py
