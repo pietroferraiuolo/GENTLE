@@ -5,7 +5,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='GENTLE',
-    version='0.2.1',
+    version='0.2.2',
     author='Pietro Ferraiuolo',
     author_email='pietro.ferraiuolo@inaf.it',
     description='GENeral inTerferometer Laboratory intErface',
