@@ -4,7 +4,6 @@ import configparser as _cp
 _config = _cp.ConfigParser()
 
 CONFIGURATION_FILE = _os.path.dirname(_os.path.abspath(__file__)) + "/config.conf"
-print(CONFIGURATION_FILE)
 _config.read(CONFIGURATION_FILE)
 _cc = _config["PATHS"]
 _ci = _config["INTERF"]
@@ -18,7 +17,6 @@ SETTINGS_CONF_FILE_M4OTT_PC = _ci["settings_m4ott"]
 
 CORE_FOLDER_PATH = _os.path.dirname(CONFIGURATION_FILE)
 BASE_PATH = _os.path.dirname(CORE_FOLDER_PATH)
-print(BASE_PATH)
 BASE_DATA_PATH = _cc["data_path"]
 OPD_IMAGES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDImages")
 OPD_SERIES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDSeries")
