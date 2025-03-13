@@ -1,6 +1,6 @@
 numpy<=1.26.4
 matplotlib
-astropy>=7.0
+astropy>=6.0
 scipy
 scikit-image
 h5py
