@@ -54,3 +54,13 @@ class _folds():
         self.I4D_PORT = _I4D_PORT
 
 folders = _folds()
+
+__all__ = [
+    'PhaseCam',
+    'analyzer',
+    'zern',
+    'load_fits',
+    'save_fits',
+    'getFileList',
+    'folders',
+]
