@@ -10,19 +10,18 @@ Description
 """
 
 import os as _os
-import jdcal as _jdcal
 import numpy as _np
-from .core import zernike as _zern
-from .core.geo import qpupil as _qpupil
+import jdcal as _jdcal
 import matplotlib.pyplot as _plt
+from .core import zernike as _zern
 from .utils import osutils as _osu
-from scipy import stats as _stats, fft as _fft, ndimage as _ndimage
 from .core import root as _foldname
+from .core.geo import qpupil as _qpupil
 from .utils.osutils import InterferometerConverter
+from scipy import stats as _stats, fft as _fft, ndimage as _ndimage
 
-ic = InterferometerConverter()
-OPDIMG = _foldname.OPD_IMAGES_ROOT_FOLDER
-OPDSER = _foldname.OPD_SERIES_ROOT_FOLDER
+_OPDIMG = _foldname.OPD_IMAGES_ROOT_FOLDER
+_OPDSER = _foldname.OPD_SERIES_ROOT_FOLDER
 
 
 def averageFrames(
@@ -58,7 +57,7 @@ def averageFrames(
         Final image of averaged frames.
 
     """
-    fileList = _osu.getFileList(tn, fold=OPDSER, key="20")
+    fileList = _osu.getFileList(tn, fold=_OPDSER, key="20")
     if first is not None and last is not None:
         fl = [
             fileList[x]
@@ -73,7 +72,7 @@ def averageFrames(
             for x in _np.arange(first, last, 1)
             if file_selector is None or x in file_selector
         ]
-    imcube = _osu.createCube(fl)
+    imcube = createCube(fl)
     if thresh is False:
         aveimg = _np.ma.mean(imcube, axis=2)
     else:
@@ -125,7 +124,7 @@ def saveAverage(tn, average_img=None, overwrite: bool = False, **kwargs):
         thresh : bool, optional
             DESCRIPTION. The default is None.
     """
-    fname = _os.path.join(OPDSER, tn, "average.fits")
+    fname = _os.path.join(_OPDSER, tn, "average.fits")
     if _os.path.isfile(fname):
         print(f"Average '{fname}' already exists")
     else:
@@ -161,7 +160,7 @@ def openAverage(tn):
     FileNotFoundError
         Raised if the file does not exist.
     """
-    fname = _os.path.join(OPDSER, tn, "average.fits")
+    fname = _os.path.join(_OPDSER, tn, "average.fits")
     try:
         image = _osu.load_fits(fname)
         print(f"Average loaded: '{fname}'")
@@ -488,7 +487,7 @@ def zernikePlot(mylist, modes=_np.array(range(1, 11))):
     """
     mytype = type(mylist)
     if mytype is list:
-        imgcube = _osu.createCube(mylist)
+        imgcube = createCube(mylist)
     if mytype is _np.ma.core.MaskedArray:
         imgcube = mylist
     zlist = []
@@ -734,7 +733,7 @@ def createCube(filelist, register=False):
     """
     cube_list = []
     for imgfits in filelist:
-        image = _osu.load_fits(imgfits)
+        image = _osu.read_phasemap(imgfits)
         if register:
             image = _np.roll(image, register)
         cube_list.append(image)
