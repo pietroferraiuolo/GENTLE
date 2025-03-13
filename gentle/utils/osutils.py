@@ -15,7 +15,7 @@ from astropy.io import fits
 from numpy.ma import masked_array
 from gentle.core import root as _fn
 
-OPTDATA = _fn.OPT_DATA_FOLDER
+OPTDATA = _fn.BASE_DATA_PATH
 OPDIMG = _fn.OPD_IMAGES_ROOT_FOLDER
 
 

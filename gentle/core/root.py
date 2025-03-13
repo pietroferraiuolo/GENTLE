@@ -3,8 +3,8 @@ import configparser as _cp
 
 _config = _cp.ConfigParser()
 
-CONFIGURATION_FILE = _os.path_dirname(_os.path.abspath(__file__)) + "/config.conf"
-
+CONFIGURATION_FILE = _os.path.dirname(_os.path.abspath(__file__)) + "/config.conf"
+print(CONFIGURATION_FILE)
 _config.read(CONFIGURATION_FILE)
 _cc = _config["PATHS"]
 _ci = _config["INTERF"]
@@ -16,14 +16,16 @@ PRODUCE_FOLDER_NAME_4D_PC = _cc["produce_4dpc"]
 PRODUCE_FOLDER_NAME_M4OTT_PC = _cc["produce_m4ott"]
 SETTINGS_CONF_FILE_M4OTT_PC = _ci["settings_m4ott"]
 
-BASE_PATH = _os.path_dirname(CONFIGURATION_FILE)
+CORE_FOLDER_PATH = _os.path.dirname(CONFIGURATION_FILE)
+BASE_PATH = _os.path.dirname(CORE_FOLDER_PATH)
+print(BASE_PATH)
 BASE_DATA_PATH = _cc["data_path"]
-OPD_IMAGES_ROOT_FOLDER = _os.path_join(BASE_DATA_PATH, "OPDImages")
-OPD_SERIES_ROOT_FOLDER = _os.path_join(BASE_DATA_PATH, "OPDSeries")
-LOGGING_FILE_PATH = _os.path_join(BASE_DATA_PATH, "interf.log")
+OPD_IMAGES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDImages")
+OPD_SERIES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDSeries")
+LOGGING_FILE_PATH = _os.path.join(BASE_DATA_PATH, "interf.log")
 
 for p in [BASE_DATA_PATH, OPD_IMAGES_ROOT_FOLDER, OPD_SERIES_ROOT_FOLDER]:
-    if not _os.path_exists(p):
+    if not _os.path.exists(p):
         _os.makedirs(p)
 
 
