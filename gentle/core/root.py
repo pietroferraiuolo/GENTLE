@@ -1,9 +1,20 @@
 import os as _os
 import configparser as _cp
+from shutil import copy as _copy
 
 _config = _cp.ConfigParser()
 
 CONFIGURATION_FILE = _os.path.dirname(_os.path.abspath(__file__)) + "/config.conf"
+_cpfile = _os.path.expanduser("~") + "/interfConfig.conf"
+if not _os.path.exists(_cpfile):
+    _copy(CONFIGURATION_FILE, _cpfile)
+    CONFIGURATION_FILE = _cpfile
+    print(f"Created configuration file at `{_cpfile}`")
+else: 
+    CONFIGURATION_FILE = _cpfile
+    print(f"Reading configuration file at `{_cpfile}`")
+
+
 _config.read(CONFIGURATION_FILE)
 _cc = _config["PATHS"]
 _ci = _config["INTERF"]
@@ -12,8 +23,8 @@ I4D_IP = str(_ci["i4d_ip"])
 I4D_PORT = int(_ci["i4d_port"])
 CAPTURE_FOLDER_NAME_4D_PC = str(_cc["capture_4dpc"])
 PRODUCE_FOLDER_NAME_4D_PC = str(_cc["produce_4dpc"])
-PRODUCE_FOLDER_NAME_M4OTT_PC = str(_cc["produce"])
-SETTINGS_CONF_FILE_M4OTT_PC = str(_ci["settings"])
+PRODUCE_FOLDER_NAME_LOCAL_PC = str(_cc["produce"])
+SETTINGS_CONF_FILE = str(_ci["settings"])
 
 CORE_FOLDER_PATH = _os.path.dirname(CONFIGURATION_FILE)
 BASE_PATH = _os.path.dirname(CORE_FOLDER_PATH)
@@ -26,6 +37,7 @@ LOGGING_FILE_PATH = _os.path.join(BASE_DATA_PATH, "interf.log")
 for p in [BASE_DATA_PATH, OPD_IMAGES_ROOT_FOLDER, OPD_SERIES_ROOT_FOLDER]:
     if not _os.path.exists(p):
         _os.makedirs(p)
+
 
 
 class ConfSettingReader4D:

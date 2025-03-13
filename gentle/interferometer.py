@@ -3,7 +3,6 @@ import numpy as _np
 import time as _time
 import shutil as _sh
 from .utils import logger as _logger
-from astropy.io import fits as _fits
 from .utils.osutils import (
     newtn as _newtn,
     InterferometerConverter,
@@ -151,7 +150,7 @@ class PhaseCam():
         )
 
         _sh.move(
-            _os.path.join(_folds.PRODUCE_FOLDER_NAME_M4OTT_PC, folder_name),
+            _os.path.join(_folds.PRODUCE_FOLDER_NAME_LOCAL_PC, folder_name),
             _folds.OPD_IMAGES_ROOT_FOLDER,
         )
         rename4D(folder_name)
@@ -167,7 +166,7 @@ class PhaseCam():
         the output is a 4 elements list with width_pixel, height_pixel, offset_x, offset_y, as read from the local copy of the 4D camera settings file
         """
 
-        file_path = _folds.SETTINGS_CONF_FILE_M4OTT_PC
+        file_path = _folds.SETTINGS_CONF_FILE
         setting_reader = _confReader(file_path)
         width_pixel = setting_reader.getImageWidhtInPixels()
         height_pixel = setting_reader.getImageHeightInPixels()
@@ -183,7 +182,7 @@ class PhaseCam():
         frame rate of the interferometer
         """
 
-        file_path = _folds.SETTINGS_CONF_FILE_M4OTT_PC
+        file_path = _folds.SETTINGS_CONF_FILE
         setting_reader = _confReader(file_path)
         frame_rate = setting_reader.getFrameRate()
         return frame_rate

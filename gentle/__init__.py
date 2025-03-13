@@ -29,8 +29,8 @@ from .core.root import (
     I4D_PORT as _I4D_PORT,
     CAPTURE_FOLDER_NAME_4D_PC  as _CAPTURE_FOLDER_NAME_4D_PC,
     PRODUCE_FOLDER_NAME_4D_PC as _PRODUCE_FOLDER_NAME_4D_PC,
-    PRODUCE_FOLDER_NAME_M4OTT_PC as _PRODUCE_FOLDER_NAME_M4OTT_PC,
-    SETTINGS_CONF_FILE_M4OTT_PC as _SETTINGS_CONF_FILE_M4OTT_PC,
+    PRODUCE_FOLDER_NAME_LOCAL_PC as _PRODUCE_FOLDER_NAME_LOCAL_PC,
+    SETTINGS_CONF_FILE as _SETTINGS_CONF_FILE,
     BASE_PATH as _BASE_PATH,
     BASE_DATA_PATH as _BASE_DATA_PATH,
     OPD_IMAGES_ROOT_FOLDER as _OPD_IMAGES_ROOT_FOLDER,
@@ -43,8 +43,8 @@ class _folds():
     def __init__(self):
         self.CAPTURE_FOLDER_NAME_4D_PC = _CAPTURE_FOLDER_NAME_4D_PC
         self.PRODUCE_FOLDER_NAME_4D_PC = _PRODUCE_FOLDER_NAME_4D_PC
-        self.PRODUCE_FOLDER_NAME_M4OTT_PC = _PRODUCE_FOLDER_NAME_M4OTT_PC
-        self.SETTINGS_CONF_FILE_M4OTT_PC = _SETTINGS_CONF_FILE_M4OTT_PC
+        self.PRODUCE_FOLDER_NAME_LOCAL_PC = _PRODUCE_FOLDER_NAME_LOCAL_PC
+        self.SETTINGS_CONF_FILE = _SETTINGS_CONF_FILE
         self.BASE_PATH = _BASE_PATH
         self.BASE_DATA_PATH = _BASE_DATA_PATH
         self.OPD_IMAGES_ROOT_FOLDER = _OPD_IMAGES_ROOT_FOLDER
@@ -53,14 +53,21 @@ class _folds():
         self.I4D_IP = _I4D_IP
         self.I4D_PORT = _I4D_PORT
 
+
 folders = _folds()
+
 
 try:
     import os as _os
-    _os.system("mount 4d && mount 4dConfig")
+    import shutil as _sh
+    mount4d = _os.system("mount 4d")
+    if mount4d == 0:
+        print("4d mounted")
+    mount4dc= _os.system("mount 4dConfig")
+    if mount4dc == 0:
+        print("4dConfig mounted")
 except Exception as e:
-    raise e
-
+    print(e)
 
 
 __all__ = [
