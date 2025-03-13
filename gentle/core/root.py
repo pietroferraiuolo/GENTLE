@@ -8,19 +8,20 @@ _config.read(CONFIGURATION_FILE)
 _cc = _config["PATHS"]
 _ci = _config["INTERF"]
 
-I4D_IP = _ci["i4d_ip"]
+I4D_IP = str(_ci["i4d_ip"])
 I4D_PORT = int(_ci["i4d_port"])
-CAPTURE_FOLDER_NAME_4D_PC = _cc["capture_4dpc"]
-PRODUCE_FOLDER_NAME_4D_PC = _cc["produce_4dpc"]
-PRODUCE_FOLDER_NAME_M4OTT_PC = _cc["produce_m4ott"]
-SETTINGS_CONF_FILE_M4OTT_PC = _ci["settings_m4ott"]
+CAPTURE_FOLDER_NAME_4D_PC = str(_cc["capture_4dpc"])
+PRODUCE_FOLDER_NAME_4D_PC = str(_cc["produce_4dpc"])
+PRODUCE_FOLDER_NAME_M4OTT_PC = str(_cc["produce_m4ott"])
+SETTINGS_CONF_FILE_M4OTT_PC = str(_ci["settings_m4ott"])
 
 CORE_FOLDER_PATH = _os.path.dirname(CONFIGURATION_FILE)
 BASE_PATH = _os.path.dirname(CORE_FOLDER_PATH)
-BASE_DATA_PATH = _cc["data_path"]
+BASE_DATA_PATH = str(_cc["data_path"])
 OPD_IMAGES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDImages")
 OPD_SERIES_ROOT_FOLDER = _os.path.join(BASE_DATA_PATH, "OPDSeries")
 LOGGING_FILE_PATH = _os.path.join(BASE_DATA_PATH, "interf.log")
+
 
 for p in [BASE_DATA_PATH, OPD_IMAGES_ROOT_FOLDER, OPD_SERIES_ROOT_FOLDER]:
     if not _os.path.exists(p):
