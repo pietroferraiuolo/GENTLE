@@ -55,6 +55,14 @@ class _folds():
 
 folders = _folds()
 
+try:
+    import os as _os
+    _os.system("mount 4d && mount 4dConfig")
+except Exception as e:
+    raise e
+
+
+
 __all__ = [
     'PhaseCam',
     'analyzer',
